@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duo-Denio</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- INTERFACE 1: BEM-VINDO -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="mascot-badge">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h1>Duo-Denio</h1>
+            <p class="subtitle">Fé</p>
+            <div class="features-list">
+                <div class="feature-item"><i class="fa-solid fa-check" style="color: #00E676;"></i> 30 Lições práticas e focadas</div>
+                <div class="feature-item"><i class="fa-solid fa-check" style="color: #00E676;"></i> Testes gerais a cada 10 lições</div>
+                <div class="feature-item"><i class="fa-solid fa-check" style="color: #00E676;"></i> Desafio final de nível difícil</div>
+            </div>
+            <button id="start-btn" class="btn-main">Começar</button>
+        </div>
+    </div>
+
+    <!-- INTERFACE 2: TRILHA DE LIÇÕES -->
+    <div id="path-screen" class="screen">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="brand"><i class="fa-solid fa-database"></i>Duo-Denio</div>
+                <div class="user-stats">
+                    <div class="stat-badge xp"><i class="fa-solid fa-bolt"></i> <span id="user-xp">0</span> XP</div>
+                    <div class="stat-badge lives"><i class="fa-solid fa-heart"></i> <span id="user-lives">5</span>/5</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="path-container">
+            <div class="path-intro">
+                <h2>Trilha de Estudos SQL</h2>
+                <p>Complete as lições em sequência para desbloquear o desafio final.</p>
+            </div>
+            
+            <div class="nodes-path" id="nodes-container">
+                <!-- Gerado via JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <!-- TELA DE LIÇÃO / PERGUNTA -->
+    <div id="lesson-screen" class="screen">
+        <div class="lesson-header">
+            <button id="quit-lesson" class="btn-quit"><i class="fa-solid fa-xmark"></i></button>
+            <div class="progress-bar-container">
+                <div id="lesson-progress" class="progress-bar"></div>
+            </div>
+            <div class="lesson-lives"><i class="fa-solid fa-heart"></i> <span id="lesson-lives-count">5</span></div>
+        </div>
+
+        <div class="lesson-content">
+            <div class="question-card">
+                <span id="question-tag" class="question-tag">Lição 1</span>
+                <h3 id="question-title">Qual comando é usado para consultar dados?</h3>
+                <div id="code-snippet-box" class="code-snippet hidden"></div>
+            </div>
+
+            <div id="options-container" class="options-grid">
+                <!-- Opções injetadas via JS -->
+            </div>
+        </div>
+
+        <div id="lesson-footer" class="lesson-footer">
+            <div class="feedback-content" id="feedback-content">
+                <!-- Mensagem de acerto/erro -->
+            </div>
+            <button id="check-btn" class="btn-main disabled">Verificar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESULTADO DA LIÇÃO / PARABÉNS -->
+    <div id="modal-screen" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div id="modal-icon" class="modal-icon success"><i class="fa-solid fa-check"></i></div>
+            <h2 id="modal-title">Lição Concluída!</h2>
+            <p id="modal-text">Você ganhou +15 XP!</p>
+            <button id="modal-btn" class="btn-main">Continuar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
