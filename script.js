@@ -106,9 +106,8 @@ let userState = {
 };
 
 let currentLessonId = null;
-let currentQuestionIndex = 0;
 let currentSelectedOption = null;
-let currentQuestionsList = [];
+let currentQuestionsQueue = []; // Fila de questões atualizada para repetição
 
 // Elementos da DOM
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -214,8 +213,8 @@ function startLesson(id) {
     }
 
     currentLessonId = id;
-    currentQuestionIndex = 0;
-    currentQuestionsList = lessonsData[id].questions;
+    // Cria uma cópia das perguntas da lição para a fila de execução
+    currentQuestionsQueue = [...lessonsData[id].questions];
 
     pathScreen.classList.remove('active');
     lessonScreen.classList.add('active');
@@ -231,20 +230,26 @@ function loadQuestion() {
     feedbackContent.className = "feedback-content";
 
     const lessonData = lessonsData[currentLessonId];
-    const q = currentQuestionsList[currentQuestionIndex];
+    
+    // Se a fila estiver vazia, significa que acertou todas as questões
+    if (currentQuestionsQueue.length === 0) {
+        finishLesson();
+        return;
+    }
+
+    const q = currentQuestionsQueue[0]; // Pega sempre a primeira questão da fila
 
     questionTag.textContent = lessonData.tag;
     questionTitle.textContent = q.q;
 
-    if (lessonData.code && currentQuestionIndex === 0) {
+    if (lessonData.code) {
         codeSnippetBox.textContent = lessonData.code;
         codeSnippetBox.classList.remove('hidden');
     } else {
         codeSnippetBox.classList.add('hidden');
     }
 
-    const progressPercent = (currentQuestionIndex / currentQuestionsList.length) * 100;
-    lessonProgress.style.width = `${progressPercent}%`;
+    lessonProgress.style.width = `100%`;
     lessonLivesCount.textContent = userState.lives;
 
     optionsContainer.innerHTML = '';
@@ -267,15 +272,16 @@ function selectOption(index, btnElement) {
 function handleCheckAnswer() {
     if (currentSelectedOption === null) return;
 
-    const q = currentQuestionsList[currentQuestionIndex];
+    const q = currentQuestionsQueue[0];
     const optionButtons = document.querySelectorAll('.option-btn');
 
     if (currentSelectedOption === q.answer) {
         optionButtons[currentSelectedOption].classList.add('correct');
         feedbackContent.textContent = "Resposta correta! Query executada com sucesso.";
         feedbackContent.className = "feedback-content correct";
-        checkBtn.textContent = "Continuar";
-        checkBtn.onclick = nextStep;
+        
+        // ACERTOU: Remove definitivamente a questão da fila
+        currentQuestionsQueue.shift();
     } else {
         optionButtons[currentSelectedOption].classList.add('wrong');
         optionButtons[q.answer].classList.add('correct');
@@ -283,10 +289,12 @@ function handleCheckAnswer() {
         userState.lives = Math.max(0, userState.lives - 1);
         updateStatsDisplay();
 
-        feedbackContent.textContent = "Ops! Erro de sintaxe ou conceito incorreto.";
+        feedbackContent.textContent = "Ops! Erro de sintaxe ou conceito incorreto. Essa questão voltará para ser refeita!";
         feedbackContent.className = "feedback-content wrong";
-        checkBtn.textContent = "Continuar";
-        checkBtn.onclick = nextStep;
+
+        // ERROU: Joga a questão atual para o final da fila para repeti-la depois
+        const questaoErrada = currentQuestionsQueue.shift();
+        currentQuestionsQueue.push(questaoErrada);
 
         if (userState.lives === 0) {
             setTimeout(() => {
@@ -300,16 +308,14 @@ function handleCheckAnswer() {
             return;
         }
     }
+
+    checkBtn.textContent = "Continuar";
+    checkBtn.onclick = nextStep;
 }
 
 function nextStep() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < currentQuestionsList.length) {
-        checkBtn.onclick = handleCheckAnswer;
-        loadQuestion();
-    } else {
-        finishLesson();
-    }
+    checkBtn.onclick = handleCheckAnswer;
+    loadQuestion();
 }
 
 function finishLesson() {
